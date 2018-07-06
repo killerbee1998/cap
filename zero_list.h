@@ -2,6 +2,8 @@
 #include <string>
 #include <iostream>
 
+#include "util.h"
+
 #ifndef ZERO_LIST
 #define ZERO_LIST
 

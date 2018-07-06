@@ -22,6 +22,24 @@ void cmd_handler::one_arg(std::string cmd, std::string arg_one){
       std::cout << "cap failed to initialize" << std::endl;
     }
 
+  }else if(cmd == "login"){
+    
+    if(one.login(arg_one)){
+      std::cout << "Sucessfully logged in" << std::endl;
+      
+    }else{
+      std::cout << "Login Unsuccessful" <<std::endl;
+    }
+    
+  }else if(cmd == "logout"){
+
+    if(one.logout(arg_one)){
+      std::cout << "Sucessfully logged off" <<std::endl;
+
+    }else{
+      std::cout << "Logoff Unsuccessful" << std::endl;
+    }
+    
   }else{
     std::cout << "Invalid command" << std::endl;
   }
