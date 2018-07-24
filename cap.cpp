@@ -1,42 +1,34 @@
-#include <iostream>
 #include <string>
 #include <vector>
-#include "cmd_handler.h"
+#include <map>
+#include <iostream>
+
+#include "handler.h"
 
 int main(int argc, char* argv[]){
 
-  cmd_handler handler;
-  std::string cmd;
+  if(argc < 2){
+    std::cout << "Enter a command" << std::endl;
+    std::cout << "Type cap help for a list of commands" << std::endl;
+    return 0;
+
+  }
+  std::string cmd = argv[1];
   std::vector<std::string> args;
-   
-  
-  if(argc > 1){
-    cmd = argv[1];
-    
-    for(int i=2;i<argc;++i){
+
+  if(argc < 3){
+    args.push_back("NO_ARG");
+
+  }else{
+
+    for(int i = 2; i < argc; ++i){
       args.push_back(argv[i]);
     }
 
   }
+  
+  handler handler;
 
-  switch(argc){
-
-  case 1:
-    std::cout << "Please issue command" << std::endl;
-    std::cout << "No command is currently isssued" << std::endl;
-    break;
-
-  case 2:
-    handler.zero_arg(cmd);
-    break;
-
-  case 3:
-    handler.one_arg(cmd, args[0]);
-    break;
-
-  default:
-    std::cout << "ERROR, Cannot execute cap" << std::endl;
-
-  }
+  handler.handle(cmd, args);
+  
 }
-    
