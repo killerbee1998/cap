@@ -1,107 +1,250 @@
 #include "util.h"
 
-bool util::project_present(std::string project_name){
+//project genral
 
-  bool present = false;
+std::string util::get_project_path(std::string project_name){
 
-  std::ifstream project_file_in("projects.txt", std::ios::in);
+  std::string project_list_path = "config/project_list.txt";
+  std::string project_path = "ERROR";
+
+  std::ifstream project_list_f(project_list_path, std::ios::in);
   std::string line;
-  std::string project_path = "/home/" + std::string(getenv("USER")) + "/Documents/" + project_name;
-  
-  while(std::getline(project_file_in, line)){
-    if(line == project_path){
-      present = true;
+  while(std::getline(project_list_f, line)){
+    std::string temp, line_name;
+    for(int i = line.length()-1; line[i]!='/'; --i){
+      temp.push_back(line[i]);
     }
+    for(int i = temp.length()-1; i > -1; --i){
+      line_name.push_back(temp[i]);
+    }
+    
+    if(line_name == project_name){
+      project_path = line;
+    }
+    
   }
 
-  project_file_in.close();
-
-  return present;
-}
-
-void util::write_current_time(std::string file_path){
-
-  std::ofstream file_out(file_path, std::ios::out | std::ios::app);
-
-  time_t t = time(NULL);
-  struct tm tm = *localtime(&t);
-
-  file_out << tm.tm_mday << "/";
-  file_out << tm.tm_mon + 1 << "/";
-  file_out << tm.tm_year + 1900  << std::endl;
-
-  file_out.close();
-
-}
-
-void util::write_log(std::string file_path, std::string log){
-
-  std::ofstream file_out(file_path, std::ios::out | std::ios::app);
+  project_list_f.close();
+  return project_path;
   
-  time_t t = time(NULL);
-  struct tm tm = *localtime(&t);
+}
 
-  file_out << "current:  " << tm.tm_mday << "/";
-  file_out << tm.tm_mon + 1 << "/";
-  file_out << tm.tm_year + 1900 << " : ";
+bool util::is_project_present(std::string project_name){
+  
+  std::string project_list_path = "config/project_list.txt";
+  bool project_exist = false;
 
-  file_out << log << std::endl;
+  struct stat st = {0};
 
-  file_out.close();
+  if(stat(project_list_path.c_str(), &st) < 0){
+    return project_exist;
+  }
 
+  std::ifstream project_list_f(project_list_path, std::ios::in);
+  std::string line;
+  while(std::getline(project_list_f, line)){
+    std::string temp, line_name;
+    
+    for(int i = line.length()-1; line[i]!='/'; --i){
+      temp.push_back(line[i]);
+    }
+    for(int i = temp.length()-1; i > -1; --i){
+      line_name.push_back(temp[i]);
+    }
+    
+    if(line_name == project_name){
+      if(util::is_file_present(line)){
+	project_exist = true;
+      }
+    }
+    
+  }
+  
+  project_list_f.close();
+
+  return project_exist;
+}
+
+//logs
+
+void util::write_global_log(std::string project_name, std::string log){
+
+  std::string log_f_p = util::get_project_path(project_name) + "/global_log.txt";
+
+  std::ofstream log_f(log_f_p, std::ios::out | std::ios::app);
+  log_f << util::get_time() << ": " << log << std::endl;
+  log_f.close();
 }
 
 void util::write_local_log(std::string project_name, std::string name, std::string log){
 
-  std::string project_path = "/home/" + std::string(getenv("USER")) + "/Documents/" + project_name;
+  std::string global_log_f_p = util::get_project_path(project_name) + "/global_log.txt";
+  std::string local_log_f_p = util::get_project_path(project_name) + "/current/" + name + "/log.txt";
 
-  std::string global_log_path = project_path + "/global_log.txt";
-  std::string local_log_path = project_path + "/current/" + name + "/log.txt";
+  std::ofstream global_log_f(global_log_f_p, std::ios::out | std::ios::app);
+  global_log_f << util::get_time() << ": " << name << " " << log << std::endl;
+  global_log_f.close();
 
-  write_log(global_log_path, name + " " + log);
-  write_log(local_log_path, log);
+  std::ofstream local_log_f(local_log_f_p, std::ios::out | std::ios::app);
+  local_log_f << util::get_time() << ": " << name << " " << log << std::endl;
+  local_log_f.close();
+}
+
+//logins
+
+bool util::is_logged(std::string project_name){
+
+  bool logged = false;
+
+  std::string login_f_p = util::get_project_path(project_name) + "/config/login.txt";
+
+  std::ifstream login_f_in(login_f_p, std::ios::in);
+  if(login_f_in.is_open()){
+    std::string line, log_stat;
+    login_f_in >> line;
+
+    int begin = 1;
+    for(unsigned int i = 0; line[i]!='*'; ++i){
+      ++begin;
+    }
+
+    for(unsigned int i = begin; i < line.length(); ++i){
+      log_stat.push_back(line[i]);
+    }
+
+    if(log_stat == "logged"){
+      logged = true;
+    }
+    
+  }
+
+  login_f_in.close();
+    
+
+  return logged;
+}
+
+std::string util::get_logged_name(std::string project_name){
+
+  std::string name = "ERROR";
   
+  std::string login_f_p = util::get_project_path(project_name) + "/config/login.txt";
+
+  struct stat st = {0};
+
+  if(stat(login_f_p.c_str(), &st) == 0){
+    std::ifstream login_f_in(login_f_p, std::ios::in);
+    std::string line;
+    name = "";
+    login_f_in >> line;
+    for(int i = 0; line[i] != '*'; ++i){
+      name.push_back(line[i]);
+    }
+    
+    login_f_in.close();
+
+  }  
+
+  return name;
+
 }
 
-void util::write_global_log(std::string project_name, std::string log){
+//time
 
-  std::string project_path = "/home/" + std::string(getenv("USER")) + "/Documents/" + project_name;
+std::string util::get_time(){
 
-  std::string global_log_path = project_path + "/global_log.txt";
+  time_t t = time(NULL);
+  struct tm *tm = localtime(&t);
 
-  write_log(global_log_path, log);
+  return std::string(asctime(tm));
 
 }
 
-void util::replace_line(std::string path, std::string init_line, std::string replace){
+std::string util::get_date(){
 
-  std::ifstream file_in(path, std::ios::in);
+  time_t t = time(NULL);
+  struct tm *tm = localtime(&t);
+
+  std::string date = std::to_string(tm->tm_mday);
+  std::string mon = std::to_string(tm->tm_mon + 1);
+  std::string yr = std::to_string(tm->tm_year + 1900);
+
+  return std::string(date + ":" + mon + ":" + yr);
+
+}
+
+//line
+
+void util::remove_line(std::string f_p, std::string remove){
+
+  std::ifstream f_in(f_p, std::ios::in);
   std::string line, store = "";
-  while(std::getline(file_in, line)){
-    if(line != init_line){
-      store += line + "\n";
-    }else{
-      store += replace + "\n";
+  while(std::getline(f_in, line)){
+    if(line != remove){
+      store += line + "/n";
     }
   }
-  file_in.close();
-  
-  std::ofstream file_out(path, std::ios::out | std::ios::trunc);
-  file_out << store;
-  file_out.close();
+  f_in.close();
+
+  std::ofstream f_out(f_p, std::ios::out | std::ios::trunc);
+  f_out << store;
+
+  f_out.close();
+
 }
 
-bool util::line_present(std::string path, std::string match_line){
+//dir
+
+bool util::is_dir_updated(std::string project_name){
+
+  bool updated = false;
+
+  std::string date_f_p = util::get_project_path(project_name) + "/config/date.txt";
+
+  std::ifstream date_f_in(date_f_p, std::ios::in);
+  std::string line;
+  date_f_in >> line;
+  date_f_in.close();
+
+  if(line == util::get_date()){
+    updated = true;
+  }
+
+  return updated;
+
+}
+
+void util::update_dir(std::string project_name){
+
+  if(!util::is_dir_updated(project_name)){
+    std::string date_f_p = util::get_project_path(project_name) + "/config/date.txt";
+
+    std::ifstream date_f_in(date_f_p, std::ios::in);
+    std::string date;
+    date_f_in >> date;
+    date_f_in.close();
+    
+    std::string cd = "cd " + util::get_project_path(project_name);
+    std::string cp = "cp -r current " + date;
+
+    system(std::string(cd+ " && " + cp).c_str());
+    
+    std::ofstream date_f_out(date_f_p, std::ios::out | std::ios::trunc);
+    date_f_out << util::get_date();
+    date_f_out.close();
+  }
+
+}
+
+bool util::is_file_present(std::string path){
 
   bool present = false;
-  
-  std::ifstream file_in(path, std::ios::in);
-  std::string line;
-  while(std::getline(file_in, line)){
-    if(line == match_line){
-      present = true;
-    }
+  struct stat st = {0};
+
+  if(stat(path.c_str(), &st) == 0){
+    present = true;
   }
 
   return present;
+
 }

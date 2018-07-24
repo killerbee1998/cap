@@ -1,27 +1,30 @@
 CXX = g++
-CXXFLAGS = -Wall -g
+CXXFLAGS = -g -Wall
 
-ZERO = zero_list
-ONE = one_list
+src = $(wildcard *.cpp)
+obj = $(src:.cpp=.o)
 
-MAIN = cap
-HANDLE = cmd_handler
-UTIL = util
 
-$(MAIN) : $(MAIN).o $(HANDLE).o $(ZERO).o $(ONE).o $(UTIL).o
-	$(CXX) $(CXXFLAGS) -o $(MAIN) $^
+ cap : $(obj)
+	$(CXX) $(CXXFLAGS) -o cap $^
 
-$(MAIN).o : $(MAIN).cpp
-	$(CXX) $(CXXFLAGS) -c $(MAIN).cpp
+.PHONY : clean
 
-$(HANDLE).o : $(HANDLE).cpp
-	$(CXX) $(CXXFLAGS) -c $(HANDLE).cpp
+clean:
+	rm -f $(obj) cap
+	rm -f *~
+	rm -f *#
 
-$(ZERO).o : $(ZERO).cpp
-	$(CXX) $(CXXFLAGS) -c $(ZERO).cpp
+.PHONY : install
+PREFIX = /usr/local
+DESTDIR = 
 
-$(ONE).o : $(ONE).cpp
-	$(CXX) $(CXXFLAGS) -c $(ONE).cpp
+install : cap
+	mkdir -p $(DESTDIR)$(PREFIX)/bin/cap
+	cp $<$(DESTDIR)$(PREFIX)/bin/cap
 
-$(UTIL).o : $(UTIL).cpp
-	$(CXX) $(CXXFLAGS) -c $(UTIL).cpp
+.PHONY : uninstall
+
+uninstall : cap
+	rm -f $(DESTDIR)$(PREFIX)/bin/cap
+
