@@ -1,3 +1,6 @@
+#ifndef UTIL
+#define UTIL
+
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -8,16 +11,16 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#ifndef UTIL
-#define UTIL
 
 namespace util{
 
-  //project genral
+  //project general
 
   std::string get_project_path(std::string project_name);
 
   bool is_project_present(std::string project_name);
+
+  std::string get_cap_path();
 
   //logs
 
@@ -37,10 +40,6 @@ namespace util{
 
   std::string get_date();
 
-  //line
-
-  void remove_line(std::string f_p, std::string remove);
-
   //dir
 
   bool is_dir_updated(std::string project_name);
@@ -50,6 +49,12 @@ namespace util{
   //file
 
   bool is_file_present(std::string path);
+  
+  void remove_line(std::string f_p, std::string remove);
+
+  //encryption
+
+  std::string encrypt(std::string str);
 } 
 
 #endif

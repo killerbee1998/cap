@@ -134,6 +134,7 @@ bool two::sub(std::string file_name, std::string project_name){
     if(util::is_file_present(dest)){
       std::string response;
       std::cout << "Remove file? " << dest <<std::endl;
+      std::cout << "Press y to remove" <<std::endl;
       std::cin >> response;
       if(response == "y" || response == "Y"){
 	std::cout << "File removed\n";
@@ -173,7 +174,8 @@ bool two:: sub_dir(std::string dir_name, std::string project_name){
     
     if(util::is_file_present(dest)){
       std::string response;
-      std::cout << "Remove directory? " << dest <<std::endl;
+      std::cout << "Remove directory? " << dest << std::endl;
+      std::cout << "Press y to remove" <<std::endl;
       std::cin >> response;
       if(response == "y" || response == "Y"){
 	std::cout << "Directory removed\n";
@@ -192,4 +194,51 @@ bool two:: sub_dir(std::string dir_name, std::string project_name){
   }
   
   return success;
+}
+
+bool two::add_new(std::string file_name, std::string project_name){
+
+  std::string file_path = util::get_project_path(project_name) + "/current/" + util::get_logged_name(project_name) + "/" + file_name;
+  bool overwrite = true;
+  
+  if(util::is_project_present(project_name)){
+    
+    std::ifstream f_in(file_path, std::ios::in);
+    if(f_in.is_open()){
+      
+      std::string ov;
+      std::cout << "File already exists. Overwrite? y/n" << std::endl;
+      std::cin >> ov;
+
+      if(ov == "n" || ov == "N"){
+	overwrite = false;
+      }
+    }
+    
+    f_in.close();
+    
+    if(overwrite){
+      std::ofstream f_out(file_path, std::ios::out | std::ios::trunc);
+      f_out.close();
+      
+      std::string ed;
+      std::cout << "Do you want to open the file? y/n" << std::endl;
+      std::cin >> ed;
+      
+      if(ed == "y" || ed == "Y"){
+	std::ifstream oped(util::get_cap_path() + "/config/default_editor.txt", std::ios::in);
+	std::string ed_cmd;
+	std::getline(oped, ed_cmd);
+	oped.close();
+	
+	ed_cmd +=  " " + file_path;
+	system(ed_cmd.c_str());
+      }
+    }
+      
+  }else{
+    std::cout << "Project not present" << std::endl;
+  }
+    
+  return overwrite;
 }

@@ -16,15 +16,21 @@ clean:
 	rm -f *#
 
 .PHONY : install
-PREFIX = /usr/local
-DESTDIR = 
 
 install : cap
-	mkdir -p $(DESTDIR)$(PREFIX)/bin/cap
-	cp $<$(DESTDIR)$(PREFIX)/bin/cap
+	sudo cp cap /bin/cap
+	sudo mkdir --parents ~/Documents/cap
+	sudo cp -r config  ~/Documents/cap/config
+	sudo cp -r docs ~/Documents/cap/docs
+
+.PHONY : update
+
+update : cap
+	sudo cp cap /bin/cap
 
 .PHONY : uninstall
 
 uninstall : cap
-	rm -f $(DESTDIR)$(PREFIX)/bin/cap
-
+	sudo rm -f /bin/cap
+	sudo rm -rf ~/Documents/cap/config
+	sudo rm -rf ~/Documents/cap/docs

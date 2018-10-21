@@ -2,11 +2,15 @@
 
 handler::handler(){
 
-  table["help"] = [](args a) {
+  table["help"] = [](args a) { //zero func
     return zero::help();
   };
+  
+  table["c-def"] = [](args a){
+    return zero::c_def();
+  };
 
-  table["init"] = [](args a) {
+  table["init"] = [](args a) { //one func
     return one::init(a[0]);
   };
 
@@ -22,7 +26,15 @@ handler::handler(){
     return one::destroy(a[0]);
   };
 
-  table["add"] = [](args a) {
+  table["explore"] = [](args a) {
+    return one::explore(a[0]);
+  };
+
+  table["cd"] = [](args a) {
+    return one::cd(a[0]);
+  };
+
+  table["add"] = [](args a) { //two func
     return two::add(a[0], a[1]);
   };
 
@@ -38,16 +50,27 @@ handler::handler(){
     return two::sub_dir(a[0], a[1]);
   };
 
+  table["add-new"] = [](args a) {
+    return two::add_new(a[0], a[1]);
+  };
 
 }
 
 void handler::handle(std::string cmd, args a){
 
-  if(table[cmd](a)){
-    std::cout << cmd << " Operation Successful" << std::endl;
+  if(table.count(cmd) == 1){
+
+    if(table[cmd](a)){
+      std::cout << cmd << " Operation Successful" << std::endl;
+      
+    }else{
+      std::cout << cmd << " Operation Failed" << std::endl;
+    }
 
   }else{
-    std::cout << cmd << " Operation Failed" << std::endl;
+
+    std::cout << "Command not present. Type cap help for a list of commands" <<std::endl;
+
   }
 
 }

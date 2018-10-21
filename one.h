@@ -13,6 +13,7 @@
 #ifndef ONE
 #define ONE
 
+
 namespace one{
 
   bool init(std::string project_name);
@@ -22,6 +23,10 @@ namespace one{
   bool logout(std::string project_name);
 
   bool destroy(std::string project_name);
+
+  bool explore(std::string project_name);
+
+  bool cd(std::string project_name);
 
 }
 

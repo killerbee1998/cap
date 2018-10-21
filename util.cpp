@@ -4,7 +4,7 @@
 
 std::string util::get_project_path(std::string project_name){
 
-  std::string project_list_path = "config/project_list.txt";
+  std::string project_list_path = util::get_cap_path() + "/config/project_list.txt";
   std::string project_path = "ERROR";
 
   std::ifstream project_list_f(project_list_path, std::ios::in);
@@ -31,7 +31,8 @@ std::string util::get_project_path(std::string project_name){
 
 bool util::is_project_present(std::string project_name){
   
-  std::string project_list_path = "config/project_list.txt";
+  std::string project_list_path = util::get_cap_path() + "/config/project_list.txt";
+
   bool project_exist = false;
 
   struct stat st = {0};
@@ -65,6 +66,11 @@ bool util::is_project_present(std::string project_name){
   return project_exist;
 }
 
+std::string util::get_cap_path(){
+
+  std::string path = "/home/" + std::string(getenv("USER")) + "/Documents/cap";
+  return path;
+}
 //logs
 
 void util::write_global_log(std::string project_name, std::string log){
@@ -72,7 +78,7 @@ void util::write_global_log(std::string project_name, std::string log){
   std::string log_f_p = util::get_project_path(project_name) + "/global_log.txt";
 
   std::ofstream log_f(log_f_p, std::ios::out | std::ios::app);
-  log_f << util::get_time() << ": " << log << std::endl;
+  log_f << util::get_time() << ": " << log << std::endl << "\n";
   log_f.close();
 }
 
@@ -82,11 +88,11 @@ void util::write_local_log(std::string project_name, std::string name, std::stri
   std::string local_log_f_p = util::get_project_path(project_name) + "/current/" + name + "/log.txt";
 
   std::ofstream global_log_f(global_log_f_p, std::ios::out | std::ios::app);
-  global_log_f << util::get_time() << ": " << name << " " << log << std::endl;
+  global_log_f << util::get_time() << ": " << name << " " << log << std::endl <<"\n";
   global_log_f.close();
 
   std::ofstream local_log_f(local_log_f_p, std::ios::out | std::ios::app);
-  local_log_f << util::get_time() << ": " << name << " " << log << std::endl;
+  local_log_f << util::get_time() << ": " << name << " " << log << std::endl<<"\n";
   local_log_f.close();
 }
 
@@ -173,26 +179,6 @@ std::string util::get_date(){
 
 }
 
-//line
-
-void util::remove_line(std::string f_p, std::string remove){
-
-  std::ifstream f_in(f_p, std::ios::in);
-  std::string line, store = "";
-  while(std::getline(f_in, line)){
-    if(line != remove){
-      store += line + "/n";
-    }
-  }
-  f_in.close();
-
-  std::ofstream f_out(f_p, std::ios::out | std::ios::trunc);
-  f_out << store;
-
-  f_out.close();
-
-}
-
 //dir
 
 bool util::is_dir_updated(std::string project_name){
@@ -247,4 +233,55 @@ bool util::is_file_present(std::string path){
 
   return present;
 
+}
+
+void util::remove_line(std::string f_p, std::string remove){
+
+  std::ifstream f_in(f_p, std::ios::in);
+  std::string line, store = "";
+  while(std::getline(f_in, line)){
+    if(line != remove){
+      store += line + "/n";
+    }
+  }
+  f_in.close();
+
+  std::ofstream f_out(f_p, std::ios::out | std::ios::trunc);
+  f_out << store;
+
+  f_out.close();
+
+}
+
+
+//encryption
+
+std::string util::encrypt(std::string str){
+
+  int sum = 0;
+  
+  for(unsigned int i = 0; i < str.length(); ++i){
+    sum += str[i];
+  }
+
+  int key = sum * str.length();
+  int key_store = key;
+  std::string encr_str;
+  
+  for(unsigned int i=0; i < str.length(); ++i){
+    if(key >= 0){
+      while(key < 32 or key > 128){
+	key -= str[i];
+      }
+
+      while(key >= 33 && key <= 127){
+	encr_str.push_back(key);
+	key -= str[i] / str.length();
+      }
+
+      key = key_store;
+    }
+  }
+  
+  return encr_str;
 }
