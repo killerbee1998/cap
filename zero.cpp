@@ -47,7 +47,7 @@ bool zero::c_def(){
     if(response == "y" || response == "Y"){
       std::string new_default_p_p;
       std::cout << "Enter the new default name here:" << std::endl;
-      std::cin >> new_default_p_p;
+      std::getline(std::cin>>std::ws, new_default_p_p);
 
       std::ofstream default_f_out(default_f_p, std::ios::out | std::ios::trunc);
       default_f_out << new_default_p_p;

@@ -19,9 +19,9 @@ clean:
 
 install : cap
 	sudo cp cap /bin/cap
-	sudo mkdir --parents ~/Documents/cap
-	sudo cp -r config  ~/Documents/cap/config
-	sudo cp -r docs ~/Documents/cap/docs
+	mkdir --parents ~/Documents/cap
+	cp -r config  ~/Documents/cap/config
+	cp -r docs ~/Documents/cap/docs
 
 .PHONY : update
 
