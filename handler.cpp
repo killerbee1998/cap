@@ -29,11 +29,10 @@ handler::handler(){
   table["explore"] = [](args a) {
     return one::explore(a[0]);
   };
-
+  
   table["cd"] = [](args a) {
     return one::cd(a[0]);
   };
-
   table["add"] = [](args a) { //two func
     return two::add(a[0], a[1]);
   };

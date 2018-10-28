@@ -268,12 +268,17 @@ bool one::explore(std::string project_name){
       system(ls.c_str());
 
       std::string explorer_cmd;
-      std::cout << "\n1. Type open to open a File/Directory" << std::endl;
-      std::cout << "2. Type editor to open the default editor"  << std::endl;
-      std::cout << "3. Type shell to execute shell commands" << std::endl;
-      std::cout << "4. Type add to add a new file" << std::endl;
-      std::cout << "5. Type sub to delete a file" << std::endl;
-      std::cout << "6. Press q to quit" << std::endl;
+      std::cout << "\nType open to open a File/Directory" << std::endl;
+      std::cout << "---------------------------------------------------------------------------------------------" << std::endl;
+      std::cout << "Type editor to open the default editor"  << std::endl;
+      std::cout << "---------------------------------------------------------------------------------------------" << std::endl;
+      std::cout << "Type shell to execute shell commands" << std::endl;
+      std::cout << "---------------------------------------------------------------------------------------------" << std::endl;
+      std::cout << "Type add to add a new file" << std::endl;
+      std::cout << "---------------------------------------------------------------------------------------------" << std::endl;
+      std::cout << "Type sub to delete a file" << std::endl;
+      std::cout << "---------------------------------------------------------------------------------------------" << std::endl;
+      std::cout << "Press q to quit" << std::endl;
       std::cin >> explorer_cmd;
 
       if(explorer_cmd == "q" || explorer_cmd == "Q"){
@@ -349,10 +354,6 @@ bool one::explore(std::string project_name){
   return true;
 }
 
-/*
-
-useless and dangerous function
-
 bool one::cd(std::string project_name){
 
   util::update_dir(project_name);
@@ -377,9 +378,8 @@ bool one::cd(std::string project_name){
 
   }else{
     std::cout << "Project not present" << std::endl;
-    std::cout << "Initialoze project to  use this command" << std::endl;
+    std::cout << "Initialize project to  use this command" << std::endl;
   }
 
   return success;
 }
-*/
