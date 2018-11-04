@@ -1,5 +1,5 @@
 #include "two.h"
-
+/*
 bool two::add(std::string file_path, std::string project_name){
 
   bool success = false;
@@ -242,3 +242,4 @@ bool two::add_new(std::string file_name, std::string project_name){
     
   return overwrite;
 }
+*/

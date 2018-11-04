@@ -31,7 +31,7 @@ bool one::init(std::string project_name){
     
   if(project_absent){ // if project doesnt exist, write into list
     std::ofstream project_list_f_out(project_list_p, std::ios::out| std::ios::app);  
-    project_list_f_out << project_p << std::endl;
+    project_list_f_out << "\n" << project_p << std::endl;
     project_list_f_out.close();
     
   }else{  //else abort
@@ -220,10 +220,10 @@ bool one::destroy(std::string project_name){
 	
 	if(sure){
 	  system(std::string("rm -r " + util::get_project_path(project_name)).c_str());
-	std::cout << "Project destroyed" << std::endl;
-	util::remove_line("/home/" + std::string(getenv("USER")) + "/Documents/cap/config/project_list.txt", util::get_project_path(project_name));
-	destroyed = true;
-	
+	  std::cout << "Project destroyed" << std::endl;
+	  util::remove_line("/home/" + std::string(getenv("USER")) + "/Documents/cap/config/project_list.txt", util::get_project_path(project_name));
+	  destroyed = true;
+	  
 	}else{
 	  std::cout << "Destruction aborted" <<std::endl;
 	  util::write_local_log(project_name, name, "Tried to destroy project");
@@ -234,7 +234,7 @@ bool one::destroy(std::string project_name){
 
   }else{
     std::cout << "Project not present" << std::endl;
-    std::cout << "Initialoze project to  use this command" << std::endl;
+    std::cout << "Initialize project to  use this command" << std::endl;
   }
   
   return destroyed;
@@ -247,7 +247,6 @@ bool one::explore(std::string project_name){
   util::update_dir(project_name);
 
   if(util::is_project_present(project_name)){
-
     bool quit = false;
     std::string path = util::get_project_path(project_name);
 
@@ -259,32 +258,32 @@ bool one::explore(std::string project_name){
       quit = true;
     }
 
-    std::cout << "Path to project " << project_name << " is ";
-    std::cout << path << std::endl;
-
     while(!quit){
-
       std::string ls = "ls -l " + path;
       system(ls.c_str());
 
       std::string explorer_cmd;
       std::cout << "\nType open to open a File/Directory" << std::endl;
       std::cout << "---------------------------------------------------------------------------------------------" << std::endl;
+      std::cout << "Type back to go back to the previous Directory" << std::endl;
+      std::cout << "---------------------------------------------------------------------------------------------" << std::endl;
       std::cout << "Type editor to open the default editor"  << std::endl;
       std::cout << "---------------------------------------------------------------------------------------------" << std::endl;
       std::cout << "Type shell to execute shell commands" << std::endl;
       std::cout << "---------------------------------------------------------------------------------------------" << std::endl;
-      std::cout << "Type add to add a new file" << std::endl;
-      std::cout << "---------------------------------------------------------------------------------------------" << std::endl;
-      std::cout << "Type sub to delete a file" << std::endl;
+      std::cout << "Type del to delete a file" << std::endl;
       std::cout << "---------------------------------------------------------------------------------------------" << std::endl;
       std::cout << "Press q to quit" << std::endl;
       std::cin >> explorer_cmd;
+      
+      for(unsigned int i=0;i<explorer_cmd.length();++i){
+	std::tolower(explorer_cmd[i]); //ensures all commands are in lowercase
+      }
 
-      if(explorer_cmd == "q" || explorer_cmd == "Q"){
+      if(explorer_cmd == "q"){
 	quit = true;
 
-      }else if(explorer_cmd == "open" || explorer_cmd == "OPEN"){
+      }else if(explorer_cmd == "open"){
 
 	std::string response;
 	std::cout << "Enter name of File/Directory you wish to open" << std::endl;
@@ -315,45 +314,98 @@ bool one::explore(std::string project_name){
 	    
 	  }else{
 	    std::cout << "Object is neither a file nor a directory" << std::endl;
+	    return true;
 	  }
 
 	}else{
-	  std::cout << "File / Directory not present, try again" << std::endl;
-
+	  std::cout << "File / Directory not present" << std::endl;
+	  std::cout << "Would you like to create the file? [Y/N]" << std::endl;
+	  char ans;
+	  std::cin >> ans;
+	  if(ans=='Y' || ans=='y'){
+	    if(response.find('.')!=std::string::npos){
+	      std::ofstream new_file(path+"/"+response, std::ios::out);
+	      new_file.close();
+	      std::cout << "A file named " + response + "has been opened" << std::endl;
+	      util::write_local_log(project_name, util::get_logged_name(project_name),  "A File named " + response + "has been opened");
+	    }else{
+	      mkdir(std::string(path+"/"+response).c_str(),0700);
+	      std::cout << "A Directory named " + response + "has been opened" << std::endl;
+	      util::write_local_log(project_name, util::get_logged_name(project_name),  "A Directory named " + response + "has been opened");
+	    }
+	  }
 	}
 	
-      }else if(explorer_cmd == "editor" || explorer_cmd == "EDITOR"){
+      }else if(explorer_cmd == "editor"){
 	std::string editor_f_p = std::string("/home/") + getenv("USER") + "/Documents/cap/config/default_editor.txt";
 	std::ifstream editor_f_in(editor_f_p, std::ios::in);
 	std::string editor_cmd, cd;
 	std::getline(editor_f_in, editor_cmd);
 	editor_f_in.close();
-	cd = "cd " + path;
-	system(std::string(cd + " && " + editor_cmd).c_str());
+	system(std::string(editor_cmd).c_str());
 	util::write_local_log(project_name, util::get_logged_name(project_name),  "Opened default editor ");
 
-      }else if(explorer_cmd == "shell" || explorer_cmd == "SHELL"){
-	std::cout << "Keep typing shell commands by blocks of words\n";
-	std::cout << "Press Return/Enter after every command\n";
-	std::cout << "Press q and Return when you want to stop\n";
-
+      }else if(explorer_cmd == "shell"){
+	std::cout << "Type the command in one line" << std::endl;
 	std::string shell_cmd;
-	std::getline(std::cin, shell_cmd);
-	
+	std::getline(std::cin>>std::ws, shell_cmd);
 	system(shell_cmd.c_str());
 
+      }else if(explorer_cmd == "del"){
+	std::string response;
+	std::cout << "Enter name of File/Directory you wish to delete" << std::endl;
+	std::cin >> response;
+	struct stat st = {0};
+	if(stat(std::string(path + "/" + response).c_str(), &st) ==0){
+	  std::cout <<"This file will be deleted forever. Are you sure you want to delete? [Y/N]" << std::endl;
+	  char ans;
+	  std::cin >> ans;
+	  if(ans == 'y' || ans == 'Y'){
+	    std::string del_cmd = "rm ";
+	    if(st.st_mode & S_IFDIR){ //if path points to a directory
+	      del_cmd += "-rf ";
+	      std::cout << "Directory at path " << path + "/" + response << "is deleted" << std::endl;
+	    }else{
+	      del_cmd += "-f ";
+	      std::cout << "File at path " << path + "/" + response << "is deleted" << std::endl;
+	    }
+	    del_cmd += path + "/" + response;
+	    system(del_cmd.c_str());
+	    
+	  }else{
+	    std::cout << "File/Directory at path " << path + "/" + response << "is not deleted" << std::endl;
+	  }
+	  
+	}else{
+	  std::cout << "File/Directory does not exist, try again" << std::endl;
+	}
+      }else if(explorer_cmd == "back"){
+	std::string temp = path;
+	for(int i = temp.length()-1;i>-1;--i){
+	  if(temp[i] == '/'){
+	    temp.pop_back();
+	    break;
+	  }else{
+	    temp.pop_back();
+	  }
+	  if(temp.length()>=util::get_project_path(project_name).length()){
+	    path = temp;
+	  }
+	}
+	  
       }else{
-	std::cout << "Invalid command";
+	std::cout << "Invalid command" << std::endl;
       }
     }
     
   }else{
-    std::cout << "Project doesnt exist";
+    std::cout << "Project doesnt exist" << std::endl;
   }
   
   return true;
 }
 
+/*
 bool one::cd(std::string project_name){
 
   util::update_dir(project_name);
@@ -383,3 +435,4 @@ bool one::cd(std::string project_name){
 
   return success;
 }
+*/
