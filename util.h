@@ -4,7 +4,9 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <vector>
 
+#include <glob.h>
 #include <time.h>
 
 #include <sys/types.h>
@@ -46,9 +48,15 @@ namespace util{
   
   void update_dir(std::string project_name);
 
+  std::vector<std::string> return_dir(const std::string &name);
+
+  void show_dir(std::string dir_name);
+
   //file
 
   bool is_file_present(std::string path);
+
+  //line
   
   void remove_line(std::string f_p, std::string remove);
 

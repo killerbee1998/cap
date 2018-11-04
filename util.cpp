@@ -222,6 +222,26 @@ void util::update_dir(std::string project_name){
 
 }
 
+std::vector<std::string> util::return_dir(const std::string &pattern){
+  glob_t glob_r;
+  glob(pattern.c_str(),GLOB_TILDE,NULL, &glob_r);
+  std::vector<std::string> files;
+  for(unsigned int i = 0; i<glob_r.gl_pathc;++i){
+    files.push_back(std::string(glob_r.gl_pathv[i]));
+  }
+  globfree(&glob_r);
+  return files;
+}
+
+void util::show_dir(std::string dir_name){
+  std::vector<std::string> f = util::return_dir("./*");
+  for(unsigned int i=0;i<f.size();++i){
+    std::cout << f[i] << std::endl;
+  }
+}
+
+//file
+
 bool util::is_file_present(std::string path){
 
   bool present = false;
@@ -235,13 +255,15 @@ bool util::is_file_present(std::string path){
 
 }
 
+//line
+
 void util::remove_line(std::string f_p, std::string remove){
 
   std::ifstream f_in(f_p, std::ios::in);
   std::string line, store = "";
   while(std::getline(f_in, line)){
     if(line != remove){
-      store += line + "/n";
+      store += line + "\n";
     }
   }
   f_in.close();

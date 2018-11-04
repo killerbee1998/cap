@@ -8,6 +8,7 @@
 #ifndef TWO
 #define TWO
 
+/* functions are disabled
 namespace two{
 
   bool add(std::string file_path, std::string project_name);
@@ -20,5 +21,5 @@ namespace two{
 
   bool add_new(std::string file_name, std::string project_name);
 }
-
+*/
 #endif
