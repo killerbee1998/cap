@@ -2,38 +2,45 @@ __WELCOME TO THE HELP MENU FOR CAP, THE SIMPLE FILE MANAGER__
 
 __INDEX:__
 
+	__FORMAT__
+
+	       N. command : cap command args[1...n]
+
 	__ZERO ARGUMENT:__
 	
-	       1. help : NONE.
+	       1. help : cap help
+
+	       2. c-def : cap c-def
 
         __ONE ARGUMENT:__
 
-	      1. init : project_name.
+	      1. init : cap init project_name
 	      
-	      2. login : project_name.
+	      2. login : cap login project_name
 	      
-	      3. logout : project_name.
+	      3. logout : cap logout project_name
 	      
-	      4. destroy : project_name.
+	      4. destroy : cap destroy project_name
 
-        __TWO ARGUMENT:__
-
-	      1. add : file_path, project_name.
-	      
-	      2. add-dir : dir_path, project_name.
-
-	      3. sub : file_name, project_name.
-
-	      4. sub-dir : : file_name, project_name.
+	      5. explore : cap explore project name
 	      
 __COMMANDS:__
 
 	__ZERO ARGUMENT:__
 
-	      1. help: Opens the help file. The help file contains a list of
+	      1. help : Opens the help file. The help file contains a list of
 	      commands for cap.
 
-	      Arguments: None.
+	      Arguments : None.
+
+	      Example : cap help
+
+	      2. c-def: Change the default directory when creating a new project
+	      .The current defaulr directory is ~/Documents/cap.
+
+	      Arguments : None
+
+	      Example : cap c-def
 
 	__ONE ARGUMENT:__
 
@@ -52,6 +59,8 @@ __COMMANDS:__
 					    projects. No project of the
 					    same name may exist before
 					    executing this command.
+
+	      Example: cap init project_name
 
              2. login : Logs in as an user of the project.
 
@@ -72,6 +81,8 @@ __COMMANDS:__
 					   this command. See [one][1]
 					   init for further details.
 
+	     Example: cap login project_name
+
              3. logout : Logs out an an user ofthe project.
 
 	     Fails if : I. Username is incorrect.
@@ -90,6 +101,8 @@ __COMMANDS:__
 					   must exist before executing
 					   this command. See [one][1]
 					   init for further details.
+
+	     Example: cap logout project_name
 					   
              4. destroy : Destroys the project in its entireity. Be
 	                  extremely cautious while using this command.
@@ -111,63 +124,35 @@ __COMMANDS:__
 					   this command. See [one][1]
 					   init for further details.
 
-        __TWO ARGUMENT:__
+             Example: cap destroy project_name
 
-	      1. add : Inserts a file to the project.
+	     5. explore : Explores the project.Sevral functions are
+	     		  available while exploring.See the prompt
+			  on how to use these functions.
 
-	      Fails if : I. Project doesnt exist yet. See [one][1] init
-			for details.
+			  Several of these functions include:
 
-			II. User is not already logged in. See [one][2]
-			login for further details.
+			  1)open : opens a file/directory. If its an
+			  editable file, it opens the file in an editor.
+			  Otherwise the file is executed.
 
-			III. File is not present.
+			  2)back: goes back one directory. Fails if you try
+			  to go outside the project.
 
-			IV. File path is invalid.
+			  2)editor : opens the default editor on the projects
+			  location.
 
-	     Arguments : I. file_path = Path of the file that must be
-	     	       	    	      	added. An actual file must exist
-					in the specified path, else this
-					command will fail.
+			  3)shell : executes a subshell script. *NOTE:
+			  use && exec bash if you want your bash script
+			  to effect the current process, otherwise the
+			  script will execute in an different subshell*
 
-			 II. project_name = Name of the project. Name
-	      		     		   must be unique. Same name
-					   cannot be used for different
-					   projects.An actual project
-					   must exist before executing
-					   this command. See [one][1]
-					   init for further details.
+			  4)del : delets a file. User must input the
+			  file/directory name. Fails if file does not
+			  exist.
 
-         2. add-dir : Inserts a directory to the project. This command
-      	    	      also works on files as well. May be use as a      
-		      replacement to [two][1] add.
+			  5)q : short for quit. Quits exploring
 
-	     Fails if : I. Project doesnt exist yet. See [one][1] init
-			 for details.
-			 
-			II. User is not already logged in. See [one][2]
-			login for further details.
-
-			III. Directory is not present.
-
-			IV. Directory path is invalid.
-
-	     Arguments : I. dir_path = Path of the directory that must be
-	     	       	    	      	added. An actual file must exist
-					in the specified path, else this
-					command will fail.
-
-			 II. project_name = Name of the project. Name
-	      		     		   must be unique. Same name
-					   cannot be used for different
-					   projects.An actual project
-					   must exist before executing
-					   this command. See [one][1]
-					   init for further details.
-					   
-	     3. sub : Deletes a specified file from the project. The file
-	     will only be deleted in the current folder. Copies will
-	     remain in their respective past directories.
 
 	     Fails if : I. Project doesnt exist yet. See [one][1] init
 			for details.
@@ -175,46 +160,12 @@ __COMMANDS:__
 			II. User is not already logged in. See [one][2]
 			login for further details.
 
-			III. File is not present in the project.
-
-			IV. File name is invalid.
-
-	     Arguments : I. file_name = Name of the file that must be
-	     	       	    	      	deleted. An actual file must exist
-					in the specified path, else this
-					command will fail.
-
-			 II. project_name = Name of the project. Name
+             Arguments : I. project_name = Name of the project. Name
 	      		     		   must be unique. Same name
 					   cannot be used for different
 					   projects.An actual project
 					   must exist before executing
 					   this command. See [one][1]
 					   init for further details.
-					   
-	     3. sub-dir : Deletes a specified directory from the project.
-	     The directory will only be deleted in the current folder.
-	     Copies will remain in their respective past directories.
 
-	     Fails if : I. Project doesnt exist yet. See [one][1] init
-			for details.
-
-			II. User is not already logged in. See [one][2]
-			login for further details.
-
-			III. Directory is not present in the project.
-
-			IV. Directory name is invalid.
-
-	     Arguments : I. dir_name = Name of the directory that must be
-	     	       	    	      	deleted. An actual directory must
-					exist in the specified path, else
-					this command will fail.
-
-			 II. project_name = Name of the project. Name
-	      		     		   must be unique. Same name
-					   cannot be used for different
-					   projects.An actual project
-					   must exist before executing
-					   this command. See [one][1]
-					   init for further details.
+             Example: cap explore project_name
