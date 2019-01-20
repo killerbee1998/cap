@@ -11,3 +11,4 @@ Installing CAP:
 Issuing Commands:
   
   Just type cap before issuing a command
+  type cap help to get a list of commands
