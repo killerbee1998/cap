@@ -250,12 +250,11 @@ bool one::explore(std::string project_name){
     bool quit = false;
     std::string path = util::get_project_path(project_name);
 
-    if(util::is_logged(project_name)){
-      path += "/current/" + util::get_logged_name(project_name);
-
-    }else{
+    if(!util::is_logged(project_name)){
       std::cout << "You most log in to perform this action" <<std::endl;
       quit = true;
+    }else{
+      path+="/current/"+util::get_logged_name(project_name);
     }
 
     while(!quit){
@@ -277,7 +276,7 @@ bool one::explore(std::string project_name){
       std::cin >> explorer_cmd;
       
       for(unsigned int i=0;i<explorer_cmd.length();++i){
-	std::tolower(explorer_cmd[i]); //ensures all commands are in lowercase
+	explorer_cmd[i] = std::tolower(explorer_cmd[i]); //ensures all commands are in lowercase
       }
 
       if(explorer_cmd == "q"){
@@ -421,8 +420,8 @@ bool one::cd(std::string project_name){
       
       system(std::string (cd_cmd + " && exec bash").c_str());
       success = true;
-      
-    }else{
+       
+   }else{
       std::cout << "Not logged" << std::endl;
       std::cout << "Log in to use this command" << std::endl;
       
