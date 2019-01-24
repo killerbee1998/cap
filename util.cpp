@@ -175,7 +175,7 @@ std::string util::get_date(){
   std::string mon = std::to_string(tm->tm_mon + 1);
   std::string yr = std::to_string(tm->tm_year + 1900);
 
-  return std::string(date + ":" + mon + ":" + yr);
+  return std::string(yr + ":" + mon + ":" + date);
 
 }
 
